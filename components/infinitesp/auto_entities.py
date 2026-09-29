@@ -15,7 +15,7 @@ from yaml-declared ones in generated code and the native API.
 import itertools
 
 from esphome import config_validation as cv
-from esphome.const import CONF_NAME
+from esphome.const import CONF_DEVICE_ID, CONF_NAME
 from esphome.core import CORE
 
 from . import sensor as _sensor_platform
@@ -289,6 +289,9 @@ async def spawn_zone_entities(climate_config):
             CONF_NAME: entity_name(comp, zone, prefix),
             "infinitesp_id": hub_id,
         }
+        # Each entity joins its climate block's sub-device (none on the main device).
+        if CONF_DEVICE_ID in climate_config:
+            cfg[CONF_DEVICE_ID] = climate_config[CONF_DEVICE_ID]
         if comp["type"] is not None:
             cfg["type"] = comp["type"]
         if comp["domain"] in ("sensor", "binary_sensor", "text_sensor", "select", "cover", "datetime", "number"):
